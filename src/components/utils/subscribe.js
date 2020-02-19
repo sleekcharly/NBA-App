@@ -21,17 +21,43 @@ class Subscriptions extends Component {
         axios.get(`${URL_SUBS}?email=${email}`)
             .then( response => {
                 if(!response.data.length){
-
+                    axios(URL_SUBS, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        data: JSON.stringify({email})
+                    }).then( response => {
+                        this.setState({
+                            email: '',
+                            success: true
+                        });
+                        this.clearMessages()
+                    })
                 } else {
-                    
+                    this.setState({
+                        email:'',
+                        alreadyIn: true
+                    });
+                    this.clearMessages()
                 }
             } )
+    }
+
+    clearMessages = () => {
+        setTimeout(() => {
+            this.setState({
+                error: false,
+                success: false,
+                alreadyIn: false
+            })
+        }, 2000)
     }
 
     handleSubmit = (event) => {
         event.preventDefault();
         let email = this.state.email;
-        let regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        let regex = /\S+@\S+\.\S+/;
 
         if(regex.test(email)){
             this.saveSubscription(email);
@@ -39,6 +65,7 @@ class Subscriptions extends Component {
             this.setState({
                 error: true
             });
+            this.clearMessages()
         }
     }
 
@@ -56,6 +83,9 @@ class Subscriptions extends Component {
                             placeholder="yourmail@email.com"
                             onChange={this.onChangeInput}
                         />
+                        <div className={state.error ? "error show" : "error"}>Check your email</div>
+                        <div className={state.success ? "success show" : "success"}>Thank you</div>
+                        <div className={state.alreadyIn ? "success show" : "success"}>You are already subscribed</div>
                     </form>
                 </div>
                 <small>
