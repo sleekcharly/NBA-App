@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import HomeSlider from './Slider';
+import Subscriptions from '../utils/subscribe';
 
 class Home extends Component {
 
@@ -11,6 +12,7 @@ class Home extends Component {
         return (
             <>
                 <HomeSlider />
+                <Subscriptions />
             </>
         )
     }
